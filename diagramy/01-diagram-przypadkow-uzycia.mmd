@@ -1,0 +1,41 @@
+flowchart LR
+    STUD([Student])
+    PRAC([Pracownik])
+    ADMIN([Administrator])
+    KIER([Kierownik])
+
+    subgraph SYS[System zarzadzania wypozyczalnia]
+        UC1((Zaloguj sie))
+        UC2((Przegladaj katalog))
+        UC3((Zarezerwuj sprzet))
+        UC4((Anuluj rezerwacje))
+        UC5((Sprawdz swoje wypozyczenia))
+        UC6((Akceptuj/odrzuc rezerwacje))
+        UC7((Wydaj sprzet))
+        UC8((Przyjmij zwrot))
+        UC9((Zglos uszkodzenie))
+        UC10((Zarzadzaj katalogiem))
+        UC11((Zarzadzaj kontami))
+        UC12((Generuj raporty))
+        UC13((Wyslij przypomnienie))
+    end
+
+    STUD --- UC1
+    STUD --- UC2
+    STUD --- UC3
+    STUD --- UC4
+    STUD --- UC5
+    PRAC --- UC1
+    PRAC --- UC6
+    PRAC --- UC7
+    PRAC --- UC8
+    PRAC --- UC9
+    ADMIN --- UC1
+    ADMIN --- UC10
+    ADMIN --- UC11
+    KIER --- UC1
+    KIER --- UC12
+
+    UC3 -.->|include| UC1
+    UC8 -.->|extend| UC9
+    SYS -.-> UC13

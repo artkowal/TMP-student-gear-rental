@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> Dostepny: dodanie do katalogu
+    Dostepny --> Zarezerwowany: rezerwacja
+    Zarezerwowany --> Dostepny: anulowanie
+    Zarezerwowany --> Wypozyczony: wydanie
+    Wypozyczony --> Dostepny: zwrot OK
+    Wypozyczony --> WSerwisie: zwrot z uszkodzeniem
+    WSerwisie --> Dostepny: naprawiony
+    WSerwisie --> Wycofany: nie do naprawy
+    Dostepny --> Wycofany: kasacja
+    Wycofany --> [*]

@@ -1,0 +1,53 @@
+classDiagram
+    class Uzytkownik {
+        +int id
+        +string imieNazwisko
+        +string email
+        +Rola rola
+        +bool aktywny
+    }
+    class Sprzet {
+        +int id
+        +string nazwa
+        +string opis
+        +string nrInwentarzowy
+        +string kodQR
+        +StanSprzetu stan
+    }
+    class Kategoria {
+        +int id
+        +string nazwa
+        +int maxDniWypozyczenia
+    }
+    class Rezerwacja {
+        +int id
+        +date dataOd
+        +date dataDo
+        +StatusRezerwacji status
+    }
+    class Wypozyczenie {
+        +int id
+        +datetime dataWydania
+        +datetime dataZwrotu
+        +datetime terminZwrotu
+        +bool przeterminowane
+    }
+    class ZgloszenieUszkodzenia {
+        +int id
+        +string opis
+        +datetime data
+    }
+    class Powiadomienie {
+        +int id
+        +string tresc
+        +datetime dataWyslania
+        +TypPowiadomienia typ
+    }
+
+    Uzytkownik "1" --> "*" Rezerwacja : sklada
+    Uzytkownik "1" --> "*" Wypozyczenie : ma
+    Kategoria "1" --> "*" Sprzet : grupuje
+    Sprzet "1" --> "*" Rezerwacja : dotyczy
+    Rezerwacja "1" --> "0..1" Wypozyczenie : realizuje
+    Wypozyczenie "1" --> "0..*" ZgloszenieUszkodzenia : moze miec
+    Uzytkownik "1" --> "*" Powiadomienie : otrzymuje

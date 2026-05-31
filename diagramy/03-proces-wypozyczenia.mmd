@@ -1,0 +1,21 @@
+flowchart TD
+    A([Start: student chce sprzet]) --> B[Student rezerwuje online]
+    B --> C{Reguly OK? brak zaleglosci, limit 3}
+    C -->|Nie| D[/Komunikat o blokadzie/]
+    D --> Z([Koniec])
+    C -->|Tak| E[Rezerwacja: status OCZEKUJACA]
+    E --> F{Pracownik akceptuje?}
+    F -->|Odrzuca| G[/Powiadomienie: odrzucono/]
+    G --> Z
+    F -->|Akceptuje| H[Student odbiera sprzet]
+    H --> I[Pracownik wydaje: status WYPOZYCZONY]
+    I --> J[System pilnuje terminu]
+    J --> K{Zbliza sie termin?}
+    K -->|Tak| L[Wyslij przypomnienie]
+    L --> M[Student zwraca sprzet]
+    K -->|Nie| M
+    M --> N{Sprzet OK?}
+    N -->|Uszkodzony| O[Zglos uszkodzenie]
+    O --> P[Status DOSTEPNY / W SERWISIE]
+    N -->|OK| P
+    P --> Z
