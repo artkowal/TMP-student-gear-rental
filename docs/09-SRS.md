@@ -107,6 +107,7 @@ Pełne brzmienie wymagań funkcjonalnych zawiera dokument 03-specyfikacja-wymaga
 | Użyteczność | NFR-04, NFR-05, NFR-06 |
 | Bezpieczeństwo | NFR-07, NFR-08, NFR-09, NFR-10 |
 | Niezawodność i utrzymanie | NFR-11, NFR-12, NFR-13 |
+| Faza 2 | NFR-15, NFR-16 |
 
 ## 4. Historia zmian dokumentu
 

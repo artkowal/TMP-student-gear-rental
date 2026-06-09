@@ -45,7 +45,7 @@ Wnioski:
 
 | System | Funkcja referencyjna | Wymaganie |
 |---|---|---|
-| Booqable | Kalendarz dostępności, katalog ze zdjęciami | FR-02, FR-04 |
+| Booqable | Kalendarz dostępności, katalog ze zdjęciami | FR-04, FR-06 |
 | myTurn | Identyfikacja sprzętu kodem QR/kreskowym | FR-19 |
 | Rezerwacja sal (USOS) | Logowanie kontem uczelnianym | FR-01, NFR-07 |
 | Wypożyczalnie pojazdów | Statusy wypożyczenia, kaucje | statusy wypożyczenia, kaucja jako zmiana |

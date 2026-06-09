@@ -1,6 +1,10 @@
 # 3. Specyfikacja wymagań
 
-Oznaczenia priorytetów (MoSCoW): M – Must have, S – Should have, C – Could have, W – Won't have.
+Oznaczenia priorytetów (MoSCoW): 
+- **M** – Must have,
+- **S** – Should have, 
+- **C** – Could have, 
+- **W** – Won't have.
 
 ## 3.1. Wymagania funkcjonalne
 
@@ -8,7 +12,7 @@ Oznaczenia priorytetów (MoSCoW): M – Must have, S – Should have, C – Coul
 
 | ID | Wymaganie | Priorytet | Źródło |
 |---|---|---|---|
-| FR-01 | System umożliwia logowanie kontem uczelnianym (SSO/LDAP) | M | konkurencja, dokumentacja |
+| FR-01 | System umożliwia logowanie kontem uczelnianym | M | konkurencja, dokumentacja |
 | FR-02 | System udostępnia profil użytkownika i dane kontaktowe | S | wywiad |
 
 ### Katalog sprzętu
@@ -24,7 +28,7 @@ Oznaczenia priorytetów (MoSCoW): M – Must have, S – Should have, C – Coul
 
 | ID | Wymaganie | Priorytet | Źródło |
 |---|---|---|---|
-| FR-07 | Student rezerwuje sprzęt online na wybrany termin | M | ankieta |
+| FR-07 | Student rezerwuje sprzęt online na wybrany termin | M | wywiad, ankieta |
 | FR-08 | System blokuje rezerwację przy zaległym zwrocie (BR-03) | M | dokumentacja |
 | FR-09 | System blokuje rezerwację po przekroczeniu limitu 3 aktywnych (BR-04) | M | dokumentacja |
 | FR-10 | Student anuluje rezerwację przed jej rozpoczęciem | S | wywiad |

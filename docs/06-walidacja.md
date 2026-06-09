@@ -38,6 +38,7 @@ Przykłady korekty wymagań:
 | TC-03 | FR-14 | Aktywne wypożyczenie, 24 h do terminu | Upływ czasu do T-24h | Jednorazowe wysłanie e-maila |
 | TC-04 | FR-09 | 3 aktywne wypożyczenia | Próba rezerwacji czwartego sprzętu | Blokada i komunikat o limicie |
 | TC-05 | FR-16 | Zwrot uszkodzonego sprzętu | Otwarcie wypożyczenia → oznaczenie uszkodzenia → opis → zatwierdzenie | Status „w serwisie", wpis w historii egzemplarza |
+| TC-06 | FR-03 | Student zalogowany | Otwarcie strony katalogu | Każdy sprzęt wyświetla aktualny status dostępności (dostępny / zarezerwowany / wypożyczony) zgodny ze stanem w systemie |
 
 ## 6.3. Ocena spójności i kompletności
 
@@ -45,7 +46,7 @@ Macierz śledzenia:
 
 | Potrzeba | Wymaganie | User story | Test |
 |---|---|---|---|
-| Brak informacji o dostępności | FR-03 | US-01 | TC-01 |
+| Brak informacji o dostępności | FR-03 | US-01 | TC-06 |
 | Rezerwacja online | FR-07 | US-02 | TC-01 |
 | Brak przypomnień o zwrotach | FR-14, FR-15 | US-03 | TC-03 |
 | Reguły regulaminu | FR-08, FR-09 | — | TC-02, TC-04 |

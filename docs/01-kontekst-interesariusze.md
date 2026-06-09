@@ -36,8 +36,9 @@ Webowa aplikacja zapewniająca:
 | Katalog i rezerwacje sprzętu | Płatności i rozliczenia finansowe |
 | Wypożyczenia i zwroty | Fizyczne zamki/szafki |
 | Powiadomienia e-mail | Natywna aplikacja mobilna |
-| Raporty i statystyki | Integracja z USOS/dziekanatem |
+| Raporty i statystyki | Integracja z dziekanatem |
 | Konta i role użytkowników | Serwis i naprawa sprzętu |
+| Integracja z USOS (faza 2) | — |
 
 ### Diagram kontekstowy
 
@@ -85,7 +86,7 @@ flowchart TB
 | Administrator | Użytkownik / utrzymanie | Stabilność i łatwość zarządzania |
 | Kierownik wypożyczalni | Decydent | Kontrola kosztów, raporty |
 | Władze uczelni / Dziekanat | Sponsor | Wykorzystanie majątku uczelni |
-| Dział IT uczelni | Utrzymanie / dostawca | Bezpieczeństwo, integracja SSO, hosting |
+| Dział IT uczelni / Administrator USOS | Utrzymanie / dostawca | Bezpieczeństwo, integracja SSO, hosting; zarządzanie USOS API (faza 2) |
 | Inspektor ochrony danych (IOD) | Regulator | Zgodność z RODO |
 | Dostawca sprzętu | Zewnętrzny | Informacja o zapotrzebowaniu |
 
@@ -104,7 +105,7 @@ quadrantChart
     "Pracownik wypozyczalni": [0.72, 0.7]
     "Administrator": [0.6, 0.58]
     "Wladze / Dziekanat": [0.3, 0.92]
-    "Dzial IT": [0.45, 0.72]
+    "Dzial IT / Admin USOS": [0.45, 0.72]
     "Inspektor RODO": [0.15, 0.62]
     "Student": [0.88, 0.28]
     "Dostawca sprzetu": [0.2, 0.2]
@@ -113,6 +114,6 @@ quadrantChart
 Klasyfikacja:
 
 - Zarządzaj blisko: Kierownik, Pracownik, Administrator.
-- Trzymaj zadowolonym: Władze uczelni, Dział IT, IOD.
+- Trzymaj zadowolonym: Władze uczelni, Dział IT / Administrator USOS, IOD.
 - Informuj na bieżąco: Student.
 - Monitoruj: Dostawca sprzętu.
