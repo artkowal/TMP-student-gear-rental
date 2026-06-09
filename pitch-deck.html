@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Zarządzania Wypożyczalnią Sprzętu Studenckiego</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#263348;
+  --primary:#3b82f6;--accent:#f59e0b;--green:#10b981;--red:#ef4444;--purple:#a78bfa;
+  --text:#f1f5f9;--muted:#94a3b8;--border:rgba(255,255,255,0.07);
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;width:100vw;overflow:hidden}
+
+/* ── DECK ── */
+#deck{width:100%;height:100%;position:relative}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:52px 72px 80px;
+  opacity:0;transform:translateX(70px);
+  transition:opacity .35s ease,transform .35s ease;
+  pointer-events:none;overflow:hidden;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.prev{opacity:0;transform:translateX(-70px)}
+
+/* ── TYPOGRAPHY ── */
+.tag{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
+.h1{font-size:40px;font-weight:900;line-height:1.15;margin-bottom:6px}
+.h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.5}
+.divider{width:44px;height:3px;background:var(--primary);border-radius:2px;margin-bottom:30px}
+
+/* ── GRID / CARDS ── */
+.grid{display:grid;gap:14px;width:100%}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 22px}
+.card-icon{font-size:20px;margin-bottom:8px}
+.card-title{font-size:13px;font-weight:700;margin-bottom:5px}
+.card-body{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── LIST ITEMS ── */
+.list{list-style:none;display:flex;flex-direction:column;gap:11px;width:100%}
+.item{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
+.item .ico{font-size:18px;flex-shrink:0}
+.item .txt{font-size:14px;line-height:1.4}
+.item.bad{border-left:3px solid var(--red)}
+.item.good{border-left:3px solid var(--green)}
+.item.info{border-left:3px solid var(--primary)}
+
+/* ── SCOPE TABLE ── */
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;flex:1}
+.scope-col{display:flex;flex-direction:column;gap:10px}
+.scope-head{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid}
+.scope-head.in{color:var(--green);border-color:rgba(16,185,129,.3)}
+.scope-head.out{color:var(--red);border-color:rgba(239,68,68,.3)}
+.scope-row{display:flex;align-items:center;gap:10px;font-size:13px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+
+/* ── STAKEHOLDERS ── */
+.s-list{display:flex;flex-direction:column;gap:9px;flex:1}
+.s-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.s-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.s-name{font-size:13px;font-weight:600;flex:1}
+.s-role{font-size:11px;color:var(--muted)}
+.s-class{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.cls-a{background:rgba(59,130,246,.18);color:var(--primary)}
+.cls-b{background:rgba(245,158,11,.18);color:var(--accent)}
+.cls-c{background:rgba(16,185,129,.18);color:var(--green)}
+.cls-d{background:rgba(148,163,184,.12);color:var(--muted)}
+
+/* ── MENDELOW ── */
+.mendelow{position:relative;width:340px;height:290px;flex-shrink:0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.mq{position:absolute;display:flex;align-items:flex-start;padding:8px 10px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.mq1{inset:0 0 50% 50%;background:rgba(59,130,246,.13);color:var(--primary)}
+.mq2{inset:0 50% 50% 0;background:rgba(245,158,11,.1);color:var(--accent)}
+.mq3{inset:50% 50% 0 0;background:rgba(148,163,184,.06);color:var(--muted)}
+.mq4{inset:50% 0 0 50%;background:rgba(16,185,129,.1);color:var(--green)}
+.m-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--primary);transform:translate(-50%,50%)}
+.m-lbl{position:absolute;font-size:9px;white-space:nowrap;transform:translate(-50%,50%);color:var(--text);font-weight:600;background:rgba(15,23,42,.85);padding:2px 5px;border-radius:4px}
+
+/* ── REQUIREMENTS ── */
+.req-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;width:100%}
+.req{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+.req-id{font-size:10px;font-weight:800;color:var(--primary);margin-bottom:4px}
+.req-txt{font-size:11px;color:var(--text);line-height:1.4}
+.req-cat{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* ── NFR ── */
+.nfr-list{display:flex;flex-direction:column;gap:9px;width:100%}
+.nfr{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 16px}
+.nfr-badge{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:6px;flex-shrink:0;min-width:84px;text-align:center}
+.b-wydaj{background:rgba(59,130,246,.2);color:var(--primary)}
+.b-uzyt{background:rgba(16,185,129,.2);color:var(--green)}
+.b-bezp{background:rgba(245,158,11,.2);color:var(--accent)}
+.b-niezaw{background:rgba(167,139,250,.2);color:var(--purple)}
+.nfr-id{font-size:10px;font-weight:700;color:var(--muted);min-width:50px}
+.nfr-name{font-size:13px;font-weight:600;flex:1}
+.nfr-val{font-size:12px;color:var(--muted);text-align:right}
+
+/* ── ARCH SVG ── */
+.arch-wrap{flex:1;display:flex;align-items:center;justify-content:center}
+
+/* ── MOSCOW ── */
+.moscow-wrap{display:flex;gap:48px;align-items:center;width:100%;flex:1}
+.m-legend{display:flex;flex-direction:column;gap:18px;flex:1}
+.m-leg-item{display:flex;align-items:center;gap:14px}
+.m-leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.m-leg-label{font-size:15px;font-weight:600;flex:1}
+.m-leg-num{font-size:32px;font-weight:900}
+.m-leg-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ── ROADMAP ── */
+.roadmap{display:flex;gap:0;width:100%;flex:1;align-items:stretch}
+.phase{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:12px;position:relative}
+.phase:not(:last-child){margin-right:32px}
+.phase:not(:last-child)::after{content:'→';position:absolute;right:-22px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--muted)}
+.ph-tag{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;width:fit-content}
+.ph-mvp{background:rgba(59,130,246,.2);color:var(--primary)}
+.ph-2{background:rgba(16,185,129,.2);color:var(--green)}
+.ph-3{background:rgba(245,158,11,.2);color:var(--accent)}
+.ph-title{font-size:17px;font-weight:800}
+.ph-items{list-style:none;display:flex;flex-direction:column;gap:8px;flex:1}
+.ph-items li{font-size:12px;color:var(--muted);display:flex;gap:8px;line-height:1.4}
+.ph-items li::before{content:'•';flex-shrink:0}
+.ph-mvp-txt .ph-items li::before{color:var(--primary)}
+.ph-2-txt .ph-items li::before{color:var(--green)}
+.ph-3-txt .ph-items li::before{color:var(--accent)}
+
+/* ── COVER ── */
+.cover-wrap{display:flex;flex-direction:column;justify-content:center;height:100%;background:radial-gradient(ellipse at 75% 50%,rgba(59,130,246,.1) 0%,transparent 65%)}
+.cover-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;color:var(--primary);margin-bottom:24px;letter-spacing:.5px}
+.cover-h1{font-size:50px;font-weight:900;line-height:1.1;max-width:680px;margin-bottom:18px}
+.cover-h1 em{font-style:normal;color:var(--accent)}
+.cover-desc{font-size:17px;color:var(--muted);max-width:520px;line-height:1.65;margin-bottom:48px}
+.cover-stats{display:flex;gap:48px}
+.cs-num{font-size:36px;font-weight:900;color:var(--accent)}
+.cs-lbl{font-size:11px;color:var(--muted);letter-spacing:.5px;margin-top:2px}
+
+/* ── SUMMARY STATS ── */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.sum-num{font-size:44px;font-weight:900;line-height:1}
+.sum-lbl{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+
+/* ── NAVIGATION ── */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .35s ease;z-index:200}
+#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(30,41,59,.92);border:1px solid var(--border);border-radius:40px;padding:10px 18px;backdrop-filter:blur(12px);z-index:100}
+.nb{background:none;border:none;color:var(--text);cursor:pointer;font-size:17px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
+.nb:hover{background:rgba(255,255,255,.1)}
+.nb:disabled{color:var(--muted);cursor:default}
+.nb:disabled:hover{background:none}
+#ctr{font-size:12px;color:var(--muted);min-width:46px;text-align:center}
+.dot-nav{display:flex;gap:6px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--muted);cursor:pointer;transition:all .2s}
+.dot.on{background:var(--primary);width:18px;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="deck">
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 1 — COVER
+══════════════════════════════════════════════════ -->
+<section class="slide active" id="s1">
+  <div class="cover-wrap">
+    <div class="cover-badge">&#x1F4DA; Inżynieria wymagań · Projekt akademicki</div>
+    <h1 class="cover-h1">System zarządzania<br><em>wypożyczalnią sprzętu</em><br>studenckiego</h1>
+    <p class="cover-desc">Analiza wymagań, specyfikacja i modelowanie systemu webowego zastępującego ręczną ewidencję sprzętu na uczelni.</p>
+    <div class="cover-stats">
+      <div><div class="cs-num">22</div><div class="cs-lbl">wymagania&nbsp;FR (MVP)</div></div>
+      <div><div class="cs-num">16</div><div class="cs-lbl">wymagania&nbsp;NFR</div></div>
+      <div><div class="cs-num">8</div><div class="cs-lbl">interesariuszy</div></div>
+      <div><div class="cs-num">3</div><div class="cs-lbl">fazy wdrożenia</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 2 — PROBLEM
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s2">
+  <div class="tag">Stan obecny · AS-IS</div>
+  <h2 class="h1">Dlaczego potrzebny<br><em>nowy system?</em></h2>
+  <p class="sub">Ewidencja prowadzona ręcznie (zeszyt, arkusz kalkulacyjny). Zidentyfikowane problemy:</p>
+  <ul class="list" style="flex:1">
+    <li class="item bad"><span class="ico">🔍</span><span class="txt"><strong>Brak informacji o dostępności</strong> — student nie wie, czy sprzęt jest wolny przed przyjściem do stanowiska</span></li>
+    <li class="item bad"><span class="ico">⏰</span><span class="txt"><strong>Brak kontroli terminów zwrotu</strong> — przetrzymany sprzęt blokuje innych użytkowników</span></li>
+    <li class="item bad"><span class="ico">⚠️</span><span class="txt"><strong>Brak rejestru uszkodzeń</strong> — niemożliwe ustalenie odpowiedzialności za zniszczony sprzęt</span></li>
+    <li class="item bad"><span class="ico">📊</span><span class="txt"><strong>Brak danych statystycznych</strong> — kierownik nie ma podstaw do decyzji zakupowych</span></li>
+    <li class="item bad"><span class="ico">🚶</span><span class="txt"><strong>Kolejki przy stanowisku</strong> — obsługa ręczna generuje czas oczekiwania w godzinach szczytu</span></li>
+  </ul>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 3 — ROZWIĄZANIE
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s3">
+  <div class="tag">Stan docelowy · TO-BE</div>
+  <h2 class="h1">Webowa aplikacja<br><em>zarządzania wypożyczalnią</em></h2>
+  <p class="sub">System obsługuje cztery kategorie sprzętu: IT, multimedialny, sportowy i laboratoryjny.</p>
+  <ul class="list" style="flex:1">
+    <li class="item good"><span class="ico">🗂️</span><span class="txt"><strong>Katalog online</strong> z aktualną dostępnością i rezerwacją — eliminacja wizyt bez potrzeby</span></li>
+    <li class="item good"><span class="ico">📋</span><span class="txt"><strong>Rejestracja wydań i zwrotów</strong> przez pracownika z kontrolą stanu sprzętu</span></li>
+    <li class="item good"><span class="ico">📧</span><span class="txt"><strong>Automatyczne powiadomienia e-mail</strong> o zbliżającym się terminie zwrotu (24 h wcześniej)</span></li>
+    <li class="item good"><span class="ico">👤</span><span class="txt"><strong>Zarządzanie katalogiem i kontami</strong> — role: Student, Pracownik, Administrator, Kierownik</span></li>
+    <li class="item good"><span class="ico">📈</span><span class="txt"><strong>Raporty i statystyki</strong> dla kierownictwa wspierające decyzje zakupowe</span></li>
+  </ul>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 4 — ZAKRES SYSTEMU
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s4">
+  <div class="tag">Granice systemu</div>
+  <h2 class="h1">Co jest <em>w zakresie</em>,<br>a co poza nim?</h2>
+  <div class="divider"></div>
+  <div class="scope">
+    <div class="scope-col">
+      <div class="scope-head in">✔ W zakresie</div>
+      <div class="scope-row"><span>📦</span> Katalog i rezerwacje sprzętu</div>
+      <div class="scope-row"><span>🔄</span> Wypożyczenia i zwroty</div>
+      <div class="scope-row"><span>📧</span> Powiadomienia e-mail</div>
+      <div class="scope-row"><span>📊</span> Raporty i statystyki</div>
+      <div class="scope-row"><span>👥</span> Konta i role użytkowników</div>
+      <div class="scope-row" style="border-left:2px solid var(--green)"><span>🔗</span> Integracja z USOS <span style="font-size:10px;color:var(--green);margin-left:6px;font-weight:700">FAZA 2</span></div>
+    </div>
+    <div class="scope-col">
+      <div class="scope-head out">✗ Poza zakresem</div>
+      <div class="scope-row"><span>💳</span> Płatności i rozliczenia finansowe</div>
+      <div class="scope-row"><span>🔒</span> Fizyczne zamki / szafki</div>
+      <div class="scope-row"><span>📱</span> Natywna aplikacja mobilna</div>
+      <div class="scope-row"><span>🏫</span> Integracja z dziekanatem</div>
+      <div class="scope-row"><span>🔧</span> Serwis i naprawa sprzętu</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 5 — INTERESARIUSZE
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <div class="tag">Analiza interesariuszy · Mendelow</div>
+  <h2 class="h1">Kto ma wpływ<br><em>na system?</em></h2>
+  <div class="divider"></div>
+  <div style="display:flex;gap:36px;flex:1;align-items:flex-start">
+    <!-- Matrix -->
+    <div class="mendelow">
+      <div class="mq mq2">Trzymaj zadowolonym</div>
+      <div class="mq mq1">Zarządzaj blisko</div>
+      <div class="mq mq3">Monitoruj</div>
+      <div class="mq mq4">Informuj na bieżąco</div>
+      <!-- dots: x=interest(left=0,right=1), y=power(bottom=0,top=1) -->
+      <!-- Kierownik [0.88, 0.90] -->
+      <div class="m-dot" style="left:88%;bottom:90%;background:var(--primary)"></div>
+      <div class="m-lbl" style="left:88%;bottom:96%">Kierownik</div>
+      <!-- Pracownik [0.72, 0.70] -->
+      <div class="m-dot" style="left:72%;bottom:70%;background:var(--primary)"></div>
+      <div class="m-lbl" style="left:72%;bottom:76%">Pracownik</div>
+      <!-- Administrator [0.60, 0.58] -->
+      <div class="m-dot" style="left:60%;bottom:58%;background:var(--primary)"></div>
+      <div class="m-lbl" style="left:60%;bottom:64%">Admin</div>
+      <!-- Wladze [0.30, 0.92] -->
+      <div class="m-dot" style="left:30%;bottom:92%;background:var(--accent)"></div>
+      <div class="m-lbl" style="left:30%;bottom:98%">Władze</div>
+      <!-- Dzial IT [0.45, 0.72] -->
+      <div class="m-dot" style="left:45%;bottom:72%;background:var(--accent)"></div>
+      <div class="m-lbl" style="left:45%;bottom:78%">Dział IT</div>
+      <!-- IOD [0.15, 0.62] -->
+      <div class="m-dot" style="left:15%;bottom:62%;background:var(--accent)"></div>
+      <div class="m-lbl" style="left:15%;bottom:68%">IOD</div>
+      <!-- Student [0.88, 0.28] -->
+      <div class="m-dot" style="left:88%;bottom:28%;background:var(--green)"></div>
+      <div class="m-lbl" style="left:88%;bottom:34%">Student</div>
+      <!-- Dostawca [0.20, 0.20] -->
+      <div class="m-dot" style="left:20%;bottom:20%;background:var(--muted)"></div>
+      <div class="m-lbl" style="left:20%;bottom:26%">Dostawca</div>
+      <!-- Axis labels -->
+      <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted)">→ Zainteresowanie</div>
+      <div style="position:absolute;left:4px;top:50%;transform:rotate(-90deg) translateX(-50%);font-size:9px;color:var(--muted);transform-origin:left center;writing-mode:vertical-rl">Władza ↑</div>
+    </div>
+    <!-- List -->
+    <div class="s-list">
+      <div class="s-item"><div class="s-dot" style="background:var(--primary)"></div><div class="s-name">Kierownik wypożyczalni</div><div class="s-role">Decydent</div><div class="s-class cls-a">Zarządzaj blisko</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--primary)"></div><div class="s-name">Pracownik wypożyczalni</div><div class="s-role">Użytkownik końcowy</div><div class="s-class cls-a">Zarządzaj blisko</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--primary)"></div><div class="s-name">Administrator</div><div class="s-role">Utrzymanie</div><div class="s-class cls-a">Zarządzaj blisko</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--accent)"></div><div class="s-name">Władze uczelni / Dziekanat</div><div class="s-role">Sponsor</div><div class="s-class cls-b">Trzymaj zadowolonym</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--accent)"></div><div class="s-name">Dział IT / Administrator USOS</div><div class="s-role">Dostawca infrastruktury</div><div class="s-class cls-b">Trzymaj zadowolonym</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--accent)"></div><div class="s-name">Inspektor ochrony danych (IOD)</div><div class="s-role">Regulator RODO</div><div class="s-class cls-b">Trzymaj zadowolonym</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--green)"></div><div class="s-name">Student</div><div class="s-role">Użytkownik końcowy</div><div class="s-class cls-c">Informuj na bieżąco</div></div>
+      <div class="s-item"><div class="s-dot" style="background:var(--muted)"></div><div class="s-name">Dostawca sprzętu</div><div class="s-role">Zewnętrzny</div><div class="s-class cls-d">Monitoruj</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 6 — WYMAGANIA FUNKCJONALNE (Must Have)
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+  <div class="tag">Wymagania funkcjonalne · Must Have MVP</div>
+  <h2 class="h1"><em>12 kluczowych</em> wymagań<br>funkcjonalnych</h2>
+  <p class="sub">Zakres MVP — fundament systemu bez których wdrożenie nie ma sensu.</p>
+  <div class="req-grid">
+    <div class="req"><div class="req-id">FR-01</div><div class="req-txt">Logowanie kontem uczelnianym (SSO)</div><div class="req-cat">Konto i logowanie</div></div>
+    <div class="req"><div class="req-id">FR-03</div><div class="req-txt">Katalog sprzętu z aktualną dostępnością</div><div class="req-cat">Katalog</div></div>
+    <div class="req"><div class="req-id">FR-04</div><div class="req-txt">Szczegóły sprzętu: zdjęcie, opis, kategoria, stan</div><div class="req-cat">Katalog</div></div>
+    <div class="req"><div class="req-id">FR-07</div><div class="req-txt">Rezerwacja sprzętu online na wybrany termin</div><div class="req-cat">Rezerwacje</div></div>
+    <div class="req"><div class="req-id">FR-08</div><div class="req-txt">Blokada rezerwacji przy zaległym zwrocie (BR-03)</div><div class="req-cat">Rezerwacje</div></div>
+    <div class="req"><div class="req-id">FR-09</div><div class="req-txt">Blokada przy przekroczeniu limitu 3 aktywnych (BR-04)</div><div class="req-cat">Rezerwacje</div></div>
+    <div class="req"><div class="req-id">FR-11</div><div class="req-txt">Pracownik akceptuje lub odrzuca rezerwację</div><div class="req-cat">Rezerwacje</div></div>
+    <div class="req"><div class="req-id">FR-12</div><div class="req-txt">Pracownik rejestruje wydanie sprzętu</div><div class="req-cat">Wypożyczenia</div></div>
+    <div class="req"><div class="req-id">FR-13</div><div class="req-txt">Pracownik rejestruje zwrot sprzętu</div><div class="req-cat">Wypożyczenia</div></div>
+    <div class="req"><div class="req-id">FR-14</div><div class="req-txt">Automatyczne przypomnienie e-mail 24 h przed zwrotem</div><div class="req-cat">Powiadomienia</div></div>
+    <div class="req"><div class="req-id">FR-20</div><div class="req-txt">Administrator zarządza katalogiem sprzętu</div><div class="req-cat">Administracja</div></div>
+    <div class="req"><div class="req-id">FR-21</div><div class="req-txt">Administrator zarządza kontami i rolami</div><div class="req-cat">Administracja</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 7 — WYMAGANIA NIEFUNKCJONALNE
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s7">
+  <div class="tag">Wymagania niefunkcjonalne · Kluczowe kryteria</div>
+  <h2 class="h1">Jakość <em>mierzalna</em>,<br>nie deklaratywna</h2>
+  <div class="divider"></div>
+  <div class="nfr-list" style="flex:1">
+    <div class="nfr"><div class="nfr-badge b-wydaj">Wydajność</div><div class="nfr-id">NFR-01</div><div class="nfr-name">Czas odpowiedzi katalogu</div><div class="nfr-val">≤ 2 s dla 95% żądań</div></div>
+    <div class="nfr"><div class="nfr-badge b-wydaj">Wydajność</div><div class="nfr-id">NFR-02</div><div class="nfr-name">Użytkownicy równoczesni</div><div class="nfr-val">min. 200 bez degradacji</div></div>
+    <div class="nfr"><div class="nfr-badge b-uzyt">Użyteczność</div><div class="nfr-id">NFR-04</div><div class="nfr-name">Responsywność interfejsu</div><div class="nfr-val">poprawny układ od 320 px</div></div>
+    <div class="nfr"><div class="nfr-badge b-uzyt">Użyteczność</div><div class="nfr-id">NFR-05</div><div class="nfr-name">Rezerwacja bez instrukcji</div><div class="nfr-val">≥ 90% testerów kończy zadanie</div></div>
+    <div class="nfr"><div class="nfr-badge b-uzyt">Użyteczność</div><div class="nfr-id">NFR-06</div><div class="nfr-name">Dostępność cyfrowa</div><div class="nfr-val">WCAG 2.1 poziom AA</div></div>
+    <div class="nfr"><div class="nfr-badge b-bezp">Bezpieczeństwo</div><div class="nfr-id">NFR-07</div><div class="nfr-name">Uwierzytelnianie SSO uczelni</div><div class="nfr-val">brak odrębnych haseł</div></div>
+    <div class="nfr"><div class="nfr-badge b-bezp">Bezpieczeństwo</div><div class="nfr-id">NFR-09</div><div class="nfr-name">Zgodność z RODO</div><div class="nfr-val">usuwalność danych, log dostępu</div></div>
+    <div class="nfr"><div class="nfr-badge b-niezaw">Niezawodność</div><div class="nfr-id">NFR-11</div><div class="nfr-name">Dostępność systemu</div><div class="nfr-val">≥ 99% w godzinach pracy</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 8 — ARCHITEKTURA SYSTEMU
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s8">
+  <div class="tag">Architektura systemu · Perspektywa kontekstowa</div>
+  <h2 class="h1">Jak to <em>działa</em>?</h2>
+  <p class="sub">Architektura klient–serwer z integracją SSO uczelni i serwerem poczty. W fazie 2: USOS API.</p>
+  <div class="arch-wrap">
+    <svg viewBox="0 0 820 360" width="820" height="360" xmlns="http://www.w3.org/2000/svg" style="font-family:Segoe UI,system-ui,sans-serif">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#3b82f6"/>
+        </marker>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#10b981"/>
+        </marker>
+        <marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#94a3b8"/>
+        </marker>
+      </defs>
+      <!-- Users -->
+      <rect x="20" y="30" width="130" height="56" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="85" y="54" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">👨‍🎓 Student</text>
+      <text x="85" y="72" text-anchor="middle" fill="#94a3b8" font-size="10">przeglądarka / PWA</text>
+
+      <rect x="20" y="120" width="130" height="56" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="85" y="144" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">👷 Pracownik</text>
+      <text x="85" y="162" text-anchor="middle" fill="#94a3b8" font-size="10">przeglądarka</text>
+
+      <rect x="20" y="210" width="130" height="56" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="85" y="234" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">⚙️ Administrator</text>
+      <text x="85" y="252" text-anchor="middle" fill="#94a3b8" font-size="10">przeglądarka</text>
+
+      <rect x="20" y="300" width="130" height="46" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="85" y="319" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">📊 Kierownik</text>
+      <text x="85" y="337" text-anchor="middle" fill="#94a3b8" font-size="10">przeglądarka</text>
+
+      <!-- Lines to App -->
+      <line x1="150" y1="58" x2="290" y2="160" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)" opacity=".7"/>
+      <line x1="150" y1="148" x2="290" y2="170" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)" opacity=".7"/>
+      <line x1="150" y1="238" x2="290" y2="185" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)" opacity=".7"/>
+      <line x1="150" y1="323" x2="290" y2="198" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)" opacity=".7"/>
+      <text x="210" y="130" fill="#3b82f6" font-size="10" text-anchor="middle">HTTPS</text>
+
+      <!-- App Server -->
+      <rect x="290" y="120" width="180" height="100" rx="12" fill="#1e3a6e" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="380" y="158" text-anchor="middle" fill="#f1f5f9" font-size="14" font-weight="800">🖥️ Aplikacja</text>
+      <text x="380" y="176" text-anchor="middle" fill="#94a3b8" font-size="11">serwerowa</text>
+      <text x="380" y="210" text-anchor="middle" fill="#3b82f6" font-size="10">REST API</text>
+
+      <!-- DB -->
+      <rect x="530" y="138" width="130" height="64" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="595" y="162" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">🗄️ Baza danych</text>
+      <text x="595" y="180" text-anchor="middle" fill="#94a3b8" font-size="10">PostgreSQL</text>
+      <line x1="470" y1="170" x2="530" y2="170" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- SSO -->
+      <rect x="530" y="30" width="130" height="64" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="595" y="54" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">🔐 SSO / LDAP</text>
+      <text x="595" y="72" text-anchor="middle" fill="#94a3b8" font-size="10">uczelnia</text>
+      <line x1="470" y1="140" x2="530" y2="75" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="502" y="100" fill="#3b82f6" font-size="9" text-anchor="middle">auth</text>
+
+      <!-- Mail -->
+      <rect x="530" y="246" width="130" height="64" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="595" y="270" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">📬 Serwer poczty</text>
+      <text x="595" y="288" text-anchor="middle" fill="#94a3b8" font-size="10">SMTP</text>
+      <line x1="470" y1="205" x2="530" y2="265" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="502" y="250" fill="#3b82f6" font-size="9" text-anchor="middle">e-mail</text>
+
+      <!-- USOS faza 2 -->
+      <rect x="700" y="120" width="110" height="64" rx="10" fill="#0f1f14" stroke="rgba(16,185,129,.4)" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="755" y="145" text-anchor="middle" fill="#10b981" font-size="12" font-weight="700">🔗 USOS API</text>
+      <text x="755" y="163" text-anchor="middle" fill="#10b981" font-size="9">faza 2</text>
+      <line x1="660" y1="170" x2="700" y2="152" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+      <text x="682" y="145" fill="#10b981" font-size="9">faza 2</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 9 — PRIORYTETYZACJA MOSCOW
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s9">
+  <div class="tag">Priorytetyzacja · MoSCoW + Kano</div>
+  <h2 class="h1"><em>Co budujemy</em><br>w pierwszej kolejności?</h2>
+  <div class="divider"></div>
+  <div class="moscow-wrap">
+    <!-- Donut chart SVG -->
+    <div class="moscow-chart">
+      <svg viewBox="0 0 240 240" width="220" height="220">
+        <!-- Must have: 12/22 = 54.5% = 196° -->
+        <circle cx="120" cy="120" r="90" fill="none" stroke="#3b82f6" stroke-width="36"
+          stroke-dasharray="307 565" stroke-dashoffset="141" transform="rotate(-90 120 120)"/>
+        <!-- Should have: 9/22 = 40.9% = 147° -->
+        <circle cx="120" cy="120" r="90" fill="none" stroke="#f59e0b" stroke-width="36"
+          stroke-dasharray="230 565" stroke-dashoffset="-166" transform="rotate(-90 120 120)"/>
+        <!-- Could have: 1/22 = 4.5% = 16° -->
+        <circle cx="120" cy="120" r="90" fill="none" stroke="#10b981" stroke-width="36"
+          stroke-dasharray="26 565" stroke-dashoffset="-396" transform="rotate(-90 120 120)"/>
+        <text x="120" y="114" text-anchor="middle" fill="#f1f5f9" font-size="28" font-weight="900">22</text>
+        <text x="120" y="136" text-anchor="middle" fill="#94a3b8" font-size="11">wymagań FR</text>
+      </svg>
+    </div>
+    <!-- Legend -->
+    <div class="m-legend">
+      <div class="m-leg-item">
+        <div class="m-leg-dot" style="background:var(--primary)"></div>
+        <div style="flex:1">
+          <div class="m-leg-label">Must have</div>
+          <div class="m-leg-desc">Logowanie, katalog, rezerwacja, wydanie, zwrot, powiadomienia, administracja</div>
+        </div>
+        <div>
+          <div class="m-leg-num" style="color:var(--primary)">12</div>
+        </div>
+      </div>
+      <div class="m-leg-item">
+        <div class="m-leg-dot" style="background:var(--accent)"></div>
+        <div style="flex:1">
+          <div class="m-leg-label">Should have</div>
+          <div class="m-leg-desc">Profil, wyszukiwanie, kalendarz, anulowanie, historia, uszkodzenia, raporty</div>
+        </div>
+        <div>
+          <div class="m-leg-num" style="color:var(--accent)">9</div>
+        </div>
+      </div>
+      <div class="m-leg-item">
+        <div class="m-leg-dot" style="background:var(--green)"></div>
+        <div style="flex:1">
+          <div class="m-leg-label">Could have</div>
+          <div class="m-leg-desc">Identyfikacja kodem QR/kreskowym (wymaga dodatkowego sprzętu)</div>
+        </div>
+        <div>
+          <div class="m-leg-num" style="color:var(--green)">1</div>
+        </div>
+      </div>
+      <div class="m-leg-item">
+        <div class="m-leg-dot" style="background:var(--muted)"></div>
+        <div style="flex:1">
+          <div class="m-leg-label">Faza 2 (poza MVP)</div>
+          <div class="m-leg-desc">Integracja USOS (FR-25), powiadomienia push PWA (FR-26)</div>
+        </div>
+        <div>
+          <div class="m-leg-num" style="color:var(--muted)">2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 10 — ROADMAP
+══════════════════════════════════════════════════ -->
+<section class="slide" id="s10">
+  <div class="tag">Plan wdrożenia · Trzy fazy</div>
+  <h2 class="h1">Roadmap <em>produktu</em></h2>
+  <p class="sub">Decyzje podjęte przez CAB (Change Advisory Board) w oparciu o analizę impact analysis.</p>
+  <div class="roadmap">
+    <div class="phase ph-mvp-txt">
+      <div class="ph-tag ph-mvp">MVP — Faza 1</div>
+      <div class="ph-title">Podstawowy obieg</div>
+      <ul class="ph-items">
+        <li>Logowanie SSO uczelni (FR-01)</li>
+        <li>Katalog z dostępnością online (FR-03, FR-04)</li>
+        <li>Rezerwacje z regułami biznesowymi (BR-01–BR-04)</li>
+        <li>Wydanie i zwrot sprzętu (FR-12, FR-13)</li>
+        <li>Przypomnienia e-mail 24 h (FR-14)</li>
+        <li>Zarządzanie katalogiem i kontami (FR-20, FR-21)</li>
+        <li>Responsywny interfejs · WCAG 2.1 AA</li>
+      </ul>
+      <div style="font-size:11px;color:var(--primary);font-weight:700;margin-top:8px">12 wymagań Must Have</div>
+    </div>
+    <div class="phase ph-2-txt">
+      <div class="ph-tag ph-2">Faza 2 — przyjęte</div>
+      <div class="ph-title">Integracja i mobilność</div>
+      <ul class="ph-items">
+        <li>Integracja z USOS API — automatyczna weryfikacja aktywności studenta (FR-25)</li>
+        <li>Obsługa niedostępności USOS — tryb awaryjny (NFR-15)</li>
+        <li>Powiadomienia push przez PWA (FR-26)</li>
+        <li>Aplikacja instalowalna jako PWA (NFR-16)</li>
+        <li>Umowa powierzenia danych (RODO / ZM-02)</li>
+      </ul>
+      <div style="font-size:11px;color:var(--green);font-weight:700;margin-top:8px">Decyzja CAB: przyjęte ✓</div>
+    </div>
+    <div class="phase ph-3-txt">
+      <div class="ph-tag ph-3">Faza 3 — odłożone</div>
+      <div class="ph-title">Rozliczenia finansowe</div>
+      <ul class="ph-items">
+        <li>Kaucja przy wypożyczeniu droższego sprzętu (FR-23)</li>
+        <li>Naliczanie opłat za każdy dzień zwłoki (FR-24)</li>
+        <li>Integracja z systemem płatności (NFR-14 / PCI DSS)</li>
+        <li>Nowy interesariusz: Kwestura / Dział finansowy</li>
+        <li>Warunek powrotu: pomiar rzeczywistych strat (FR-22)</li>
+      </ul>
+      <div style="font-size:11px;color:var(--accent);font-weight:700;margin-top:8px">Decyzja CAB: odłożone do pomiaru strat</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ══════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════ -->
+<div id="nav">
+  <button class="nb" id="prev" onclick="go(-1)" disabled>&#8592;</button>
+  <div class="dot-nav" id="dots"></div>
+  <span id="ctr">1 / 10</span>
+  <button class="nb" id="next" onclick="go(1)">&#8594;</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+const dotsEl = document.getElementById('dots');
+const dots = [];
+for(let i=0;i<total;i++){
+  const d = document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>jump(i);
+  dotsEl.appendChild(d);
+  dots.push(d);
+}
+
+function render(){
+  slides.forEach((s,i)=>{
+    s.classList.remove('active','prev');
+    if(i===cur) s.classList.add('active');
+    else if(i<cur) s.classList.add('prev');
+  });
+  dots.forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('ctr').textContent=(cur+1)+' / '+total;
+  document.getElementById('prev').disabled=cur===0;
+  document.getElementById('next').disabled=cur===total-1;
+  document.getElementById('progress').style.width=((cur+1)/total*100)+'%';
+}
+
+function go(dir){ if(cur+dir>=0&&cur+dir<total){cur+=dir;render();} }
+function jump(i){ cur=i; render(); }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') go(-1);
+});
+
+render();
+</script>
+</body>
+</html>
