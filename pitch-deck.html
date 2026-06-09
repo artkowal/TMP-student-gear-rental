@@ -331,8 +331,11 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
       <div class="m-dot" style="left:20%;top:80%;background:var(--muted)"></div>
       <div class="m-lbl" style="left:20%;top:85%">Dostawca</div>
       <!-- axis labels -->
-      <div style="position:absolute;bottom:5px;right:8px;font-size:9px;color:var(--muted)">Zainteresowanie →</div>
-      <div style="position:absolute;top:8px;left:5px;font-size:9px;color:var(--muted);writing-mode:vertical-lr;transform:rotate(180deg)">← Władza</div>
+      <div style="position:absolute;bottom:5px;left:36px;font-size:9px;color:var(--muted)">Niskie zainteresowanie</div>
+      <div style="position:absolute;bottom:5px;right:36px;font-size:9px;color:var(--muted)">Wysokie zainteresowanie</div>
+
+      <div style="position:absolute;bottom:36px;left:5px;font-size:9px;color:var(--muted);writing-mode:vertical-lr;transform:rotate(180deg)">Niska władza</div>
+      <div style="position:absolute;top:36px;left:5px;font-size:9px;color:var(--muted);writing-mode:vertical-lr;transform:rotate(180deg)">Wysoka władza</div>
     </div>
 
     <div class="s-list">
@@ -393,7 +396,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   <p class="sub">Architektura klient–serwer. Integracje: SSO/LDAP uczelni, serwer poczty SMTP. Faza 2: USOS API.</p>
 
   <!-- Pure SVG — no marker-end, arrowheads as inline polygons -->
-  <svg viewBox="0 0 820 248" width="100%" style="flex:1;max-height:240px" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 820 268" width="100%" style="flex:1;max-height:240px" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <style>
         .box{rx:10;ry:10}
@@ -443,9 +446,9 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <text x="531" y="70" class="lbl-sm">PostgreSQL</text>
 
     <!-- ── SSO BOX ── -->
-    <rect x="457" y="103" width="148" height="62" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
-    <text x="531" y="130" class="lbl" font-size="14" font-weight="700">🔐 SSO / LDAP</text>
-    <text x="531" y="149" class="lbl-sm">uczelnia · auth</text>
+    <rect x="457" y="98" width="148" height="62" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+    <text x="531" y="125" class="lbl" font-size="14" font-weight="700">🔐 SSO / LDAP</text>
+    <text x="531" y="144" class="lbl-sm">uczelnia · auth</text>
 
     <!-- ── MAIL BOX ── -->
     <rect x="457" y="172" width="148" height="62" rx="10" fill="#1e293b" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
@@ -453,7 +456,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <text x="531" y="218" class="lbl-sm">SMTP · e-mail</text>
 
     <!-- ── DASHED: app → USOS (faza 2) ── -->
-    <polyline points="386,144 422,144 422,220 655,220 655,172" class="conn-dash"/>
+    <polyline points="386,144 422,144 422,260 655,260 655,172" class="conn-dash"/>
     <polygon points="650,175 655,167 660,175" fill="#10b981"/>
 
     <!-- ── USOS BOX (faza 2) ── -->
@@ -462,7 +465,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <text x="714" y="148" class="lbl-sm" fill="#10b981">faza 2 · ZM-02</text>
 
     <!-- ── LABEL: faza 2 on dashed line ── -->
-    <text x="536" y="212" class="lbl-sm" fill="#10b981">faza 2</text>
+    <text x="536" y="252" class="lbl-sm" fill="#10b981">faza 2</text>
   </svg>
 </section>
 
