@@ -53,7 +53,7 @@ flowchart TB
     SYS((System zarzadzania<br/>wypozyczalnia sprzetu))
 
     MAIL[Serwer poczty e-mail]
-    LDAP[System logowania uczelni<br/>LDAP/SSO]
+    LDAP[System logowania uczelni]
 
     STUD -->|przeglada katalog, rezerwuje| SYS
     PRAC -->|wydaje / przyjmuje sprzet| SYS
@@ -72,7 +72,7 @@ flowchart TB
 | Student | Wypożyczający sprzęt | Przeglądanie katalogu, rezerwacja, podgląd wypożyczeń, odbiór powiadomień | Średni |
 | Pracownik wypożyczalni | Obsługa stanowiska | Wydanie i przyjęcie sprzętu, akceptacja/odrzucenie rezerwacji, zgłaszanie uszkodzeń | Średni |
 | Administrator | Obsługa techniczna | Zarządzanie katalogiem, kontami i rolami, konfiguracja | Wysoki |
-| Kierownik | Nadzór | Generowanie raportów i statystyk, decyzje zakupowe | Niski/średni |
+| Kierownik | Nadzór | Generowanie raportów i statystyk, decyzje zakupowe | Niski |
 
 ## 1.3. Mapa interesariuszy
 
@@ -100,14 +100,14 @@ quadrantChart
     quadrant-2 "Trzymaj zadowolonym"
     quadrant-3 "Monitoruj"
     quadrant-4 "Informuj na biezaco"
-    "Kierownik wypozyczalni": [0.85, 0.85]
-    "Pracownik wypozyczalni": [0.9, 0.55]
-    "Wladze / Dziekanat": [0.4, 0.9]
-    "Dzial IT": [0.55, 0.75]
-    "Student": [0.92, 0.4]
-    "Inspektor RODO": [0.3, 0.7]
-    "Administrator": [0.8, 0.5]
-    "Dostawca sprzetu": [0.2, 0.25]
+    "Kierownik wypozyczalni": [0.88, 0.9]
+    "Pracownik wypozyczalni": [0.72, 0.7]
+    "Administrator": [0.6, 0.58]
+    "Wladze / Dziekanat": [0.3, 0.92]
+    "Dzial IT": [0.45, 0.72]
+    "Inspektor RODO": [0.15, 0.62]
+    "Student": [0.88, 0.28]
+    "Dostawca sprzetu": [0.2, 0.2]
 ```
 
 Klasyfikacja:
