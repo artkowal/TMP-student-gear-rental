@@ -59,7 +59,7 @@ Role: Student, Pracownik, Administrator, Kierownik. Zróżnicowany poziom techni
 
 - C-01: Logowanie wyłącznie przez SSO uczelni.
 - C-02: Zgodność z RODO.
-- C-03: Działanie w przeglądarce, bez instalacji.
+- C-03: Działanie w przeglądarce; opcjonalna instalacja jako PWA na urządzeniu mobilnym (faza 2, NFR-16).
 - C-04: Hosting po stronie Działu IT uczelni.
 
 ### 2.5. Założenia i zależności

@@ -55,6 +55,13 @@ Oznaczenia priorytetów (MoSCoW):
 | FR-21 | Administrator zarządza kontami i rolami użytkowników | M | konkurencja |
 | FR-22 | Kierownik generuje raporty wykorzystania sprzętu | S | wywiad |
 
+### Faza 2
+
+| ID | Wymaganie | Priorytet | Źródło |
+|---|---|---|---|
+| FR-25 | System pobiera status aktywności studenta z USOS API | M | ZM-02 |
+| FR-26 | System wysyła powiadomienia push przez aplikację PWA | M | ZM-03 |
+
 ## 3.2. Wymagania niefunkcjonalne
 
 ### Wydajność
@@ -89,6 +96,13 @@ Oznaczenia priorytetów (MoSCoW):
 | NFR-11 | Dostępność systemu | ≥ 99% w godzinach pracy uczelni |
 | NFR-12 | Kopie zapasowe | codziennie, retencja 30 dni |
 | NFR-13 | Zgodność z przeglądarkami | 2 ostatnie wersje Chrome, Firefox, Edge, Safari |
+
+### Faza 2
+
+| ID | Wymaganie | Kryterium |
+|---|---|---|
+| NFR-15 | Obsługa niedostępności USOS | system działa w trybie awaryjnym przy braku odpowiedzi USOS API |
+| NFR-16 | Aplikacja dostępna jako PWA | instalowalna na urządzeniu mobilnym, powiadomienia push aktywne |
 
 ## 3.3. User stories i kryteria akceptacji
 

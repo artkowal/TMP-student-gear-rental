@@ -10,6 +10,7 @@ Zastosowano dwie metody: MoSCoW oraz model Kano.
 | Should have | FR-02, FR-05, FR-06, FR-10, FR-15, FR-16, FR-17, FR-18, FR-22 | 9 |
 | Could have | FR-19 | 1 |
 | Won't have | płatności online, oceny sprzętu | — |
+| Faza 2 (poza MVP) | FR-25, FR-26 | 2 |
 
 ```mermaid
 pie showData
@@ -63,3 +64,5 @@ quadrantChart
 | FR-16, FR-17 | S | Istotne dla rozliczalności, nie blokują obiegu podstawowego |
 | FR-22 | S | Raportowanie okresowe, możliwe po MVP |
 | FR-19 | C | Wymaga dodatkowego sprzętu (skanery, etykiety) |
+| FR-25 | M (faza 2) | Automatyzuje regułę BR-01; wdrożenie po MVP (ZM-02) |
+| FR-26 | M (faza 2) | Uzupełnia kanał e-mail o push; wdrożenie w wariancie PWA (ZM-03) |

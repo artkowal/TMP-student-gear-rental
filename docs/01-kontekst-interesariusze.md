@@ -64,6 +64,9 @@ flowchart TB
     SYS -->|wysyla powiadomienia| MAIL
     SYS -->|uwierzytelnia| LDAP
     MAIL -->|dostarcza maile| STUD
+
+    USOS[USOS API]
+    SYS -. faza 2 .-> USOS
 ```
 
 ## 1.2. Użytkownicy systemu
